@@ -1782,7 +1782,7 @@ public class FileDisplayActivity extends FileActivity
                 file,
                 getAccount(),
                 startPlaybackPosition,
-                true
+                false
         );
         setSecondFragment(mediaFragment);
         updateFragmentsVisibility(true);
