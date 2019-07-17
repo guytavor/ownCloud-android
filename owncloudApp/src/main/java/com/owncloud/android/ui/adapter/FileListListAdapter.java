@@ -192,7 +192,7 @@ public class FileListListAdapter extends BaseAdapter implements ListAdapter {
 
             fileIcon.setTag(file.getFileId());
             TextView fileName;
-            String name = removeFileExtension(file.getFileName());
+            String name = normalizeMp3Name(file.getFileName());
 
             final LinearLayout linearLayout = view.findViewById(R.id.ListItemLayout);
             linearLayout.setContentDescription("LinearLayout-" + name);
@@ -227,7 +227,7 @@ public class FileListListAdapter extends BaseAdapter implements ListAdapter {
                 case GRID_ITEM:
                     // filename
                     fileName = view.findViewById(R.id.Filename);
-                    name = removeFileExtension(file.getFileName());
+                    name = normalizeMp3Name(file.getFileName());
                     fileName.setText(name);
 
                 case GRID_IMAGE:
@@ -313,7 +313,7 @@ public class FileListListAdapter extends BaseAdapter implements ListAdapter {
 
                 } else {
                     fileIcon.setImageResource(MimetypeIconUtil.getFileTypeIconId(file.getMimetype(),
-                        removeFileExtension(file.getFileName())));
+                        normalizeMp3Name(file.getFileName())));
                 }
 
             }
@@ -321,13 +321,26 @@ public class FileListListAdapter extends BaseAdapter implements ListAdapter {
         return view;
     }
 
-    private String removeFileExtension(String fileName) {
-        final int endIndex = fileName.lastIndexOf('.');
+    private String normalizeMp3Name(String fileName) {
+        int endIndex = fileName.lastIndexOf('.');
         if (endIndex > 0) {
-            return fileName.substring(0, endIndex);
-        } else {
-            return fileName;
+            // Has extension.
+            if (fileName.substring(endIndex).equalsIgnoreCase(".mp3")) {
+                // MP3 file, normalize its name:
+
+                // Add ":" between hour and minutes.
+                fileName = fileName.replaceAll("_(\\d\\d)(\\d\\d)_", "_$1\\:$2_");
+
+                endIndex++; // We've added a character.
+                // Replace underscores with spaces and remove the .mp3 extension.
+                fileName = fileName
+                    .substring(0, endIndex)
+                    .replaceAll("_", " ");
+
+
+            }
         }
+        return fileName;
     }
 
     private void setIconPinAcordingToFilesLocalState(ImageView localStateView, OCFile file) {
