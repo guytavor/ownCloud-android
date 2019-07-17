@@ -35,18 +35,20 @@ import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.owncloud.android.Dhamma;
 import com.owncloud.android.R;
 import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.ui.ExtendedListView;
 import com.owncloud.android.ui.activity.OnEnforceableRefreshListener;
 import com.owncloud.android.utils.PreferenceUtils;
-import third_parties.in.srain.cube.GridViewWithHeaderAndFooter;
 
 import java.util.ArrayList;
+
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import third_parties.in.srain.cube.GridViewWithHeaderAndFooter;
 
 public class ExtendedListFragment extends Fragment
         implements OnItemClickListener, OnEnforceableRefreshListener {
@@ -353,7 +355,7 @@ public class ExtendedListFragment extends Fragment
      * @param   enabled     Desired visibility for the FAB.
      */
     public void setFabEnabled(boolean enabled) {
-        if (enabled) {
+        if (enabled && Dhamma.isAdmin()) {
             mFabMain.setVisibility(View.VISIBLE);
         } else {
             mFabMain.setVisibility(View.GONE);
