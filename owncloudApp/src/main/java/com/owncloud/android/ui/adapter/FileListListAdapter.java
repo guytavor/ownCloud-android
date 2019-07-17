@@ -192,7 +192,7 @@ public class FileListListAdapter extends BaseAdapter implements ListAdapter {
 
             fileIcon.setTag(file.getFileId());
             TextView fileName;
-            String name = file.getFileName();
+            String name = removeFileExtension(file.getFileName());
 
             final LinearLayout linearLayout = view.findViewById(R.id.ListItemLayout);
             linearLayout.setContentDescription("LinearLayout-" + name);
@@ -227,7 +227,7 @@ public class FileListListAdapter extends BaseAdapter implements ListAdapter {
                 case GRID_ITEM:
                     // filename
                     fileName = view.findViewById(R.id.Filename);
-                    name = file.getFileName();
+                    name = removeFileExtension(file.getFileName());
                     fileName.setText(name);
 
                 case GRID_IMAGE:
@@ -313,12 +313,21 @@ public class FileListListAdapter extends BaseAdapter implements ListAdapter {
 
                 } else {
                     fileIcon.setImageResource(MimetypeIconUtil.getFileTypeIconId(file.getMimetype(),
-                            file.getFileName()));
+                        removeFileExtension(file.getFileName())));
                 }
 
             }
         }
         return view;
+    }
+
+    private String removeFileExtension(String fileName) {
+        final int endIndex = fileName.lastIndexOf('.');
+        if (endIndex > 0) {
+            return fileName.substring(0, endIndex);
+        } else {
+            return fileName;
+        }
     }
 
     private void setIconPinAcordingToFilesLocalState(ImageView localStateView, OCFile file) {
