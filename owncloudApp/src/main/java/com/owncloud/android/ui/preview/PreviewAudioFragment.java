@@ -512,6 +512,18 @@ public class PreviewAudioFragment extends FileFragment {
         mMediaServiceBinder.pause();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Stop preview when fragment is closed. (back pressed, etc..)
+        if (mMediaServiceBinder != null) {
+            if (mMediaServiceBinder.isPlaying()) {
+                mMediaController.doPauseResume();
+            }
+        }
+    }
+
+
     /**
      * Finishes the preview
      */

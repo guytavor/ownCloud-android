@@ -265,7 +265,7 @@ public class MediaControlView extends FrameLayout implements OnClickListener, On
         }
     }
 
-    private void doPauseResume() {
+    public void doPauseResume() {
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
         } else {
