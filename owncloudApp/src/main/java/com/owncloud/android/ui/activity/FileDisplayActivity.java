@@ -50,13 +50,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.owncloud.android.AppRater;
+import com.owncloud.android.Dhamma;
 import com.owncloud.android.MainApp;
 import com.owncloud.android.R;
 import com.owncloud.android.authentication.FingerprintManager;
@@ -106,6 +102,12 @@ import com.owncloud.android.utils.PreferenceUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.owncloud.android.MainApp.isDeveloper;
 import static com.owncloud.android.db.PreferenceManager.getSortOrder;
@@ -518,39 +520,47 @@ public class FileDisplayActivity extends FileActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean drawerOpen = isDrawerOpen();
-        menu.findItem(R.id.action_sync_account).setVisible(!drawerOpen);
-        menu.findItem(R.id.action_switch_view).setVisible(!drawerOpen);
+        if (Dhamma.isAdmin()) {
+            boolean drawerOpen = isDrawerOpen();
+            menu.findItem(R.id.action_sync_account).setVisible(!drawerOpen);
+            menu.findItem(R.id.action_switch_view).setVisible(!drawerOpen);
 
-        return super.onPrepareOptionsMenu(menu);
+            return super.onPrepareOptionsMenu(menu);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        if (Dhamma.isAdmin()) {
+            MenuInflater inflater = getMenuInflater();
 
-        // Allow or disallow touches with other visible windows
-        View actionBarView = findViewById(R.id.action_bar);
-        if (actionBarView != null) {
-            actionBarView.setFilterTouchesWhenObscured(
+            // Allow or disallow touches with other visible windows
+            View actionBarView = findViewById(R.id.action_bar);
+            if (actionBarView != null) {
+                actionBarView.setFilterTouchesWhenObscured(
                     PreferenceUtils.shouldDisallowTouchesWithOtherVisibleWindows(getApplicationContext())
-            );
+                );
+            }
+
+            inflater.inflate(R.menu.main_menu, menu);
+            inflater.inflate(R.menu.sort_menu, menu.findItem(R.id.action_sort).getSubMenu());
+            menu.findItem(R.id.action_create_dir).setVisible(false);
+
+            mDescendingMenuItem = menu.findItem(R.id.action_sort_descending);
+            mSelectAllMenuItem = menu.findItem(R.id.action_select_all);
+            if (getSecondFragment() == null) {
+                mSelectAllMenuItem.setVisible(true);
+            }
+            mMainMenu = menu;
+
+            recoverSortMenuFormPreferences(menu);
+
+            return true;
+        } else {
+            return false;
         }
-
-        inflater.inflate(R.menu.main_menu, menu);
-        inflater.inflate(R.menu.sort_menu, menu.findItem(R.id.action_sort).getSubMenu());
-        menu.findItem(R.id.action_create_dir).setVisible(false);
-
-        mDescendingMenuItem = menu.findItem(R.id.action_sort_descending);
-        mSelectAllMenuItem = menu.findItem(R.id.action_select_all);
-        if (getSecondFragment() == null) {
-            mSelectAllMenuItem.setVisible(true);
-        }
-        mMainMenu = menu;
-
-        recoverSortMenuFormPreferences(menu);
-
-        return true;
     }
 
     @Override

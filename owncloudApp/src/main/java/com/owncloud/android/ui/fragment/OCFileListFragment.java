@@ -52,13 +52,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.SearchView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
+import com.owncloud.android.Dhamma;
 import com.owncloud.android.R;
 import com.owncloud.android.authentication.AccountUtils;
 import com.owncloud.android.datamodel.FileDataStorageManager;
@@ -86,6 +83,11 @@ import com.owncloud.android.utils.PreferenceUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * A Fragment that lists all files and folders in a given path.
@@ -264,12 +266,14 @@ public class OCFileListFragment extends ExtendedListFragment implements
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        mSearchView.setMaxWidth(Integer.MAX_VALUE);
-        mSearchView.setQueryHint(getResources().getString(R.string.actionbar_search));
-        mSearchView.setOnQueryTextFocusChangeListener(this);
-        mSearchView.setOnQueryTextListener(this);
+        if (Dhamma.isAdmin()) {
+            super.onCreateOptionsMenu(menu, inflater);
+            mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+            mSearchView.setMaxWidth(Integer.MAX_VALUE);
+            mSearchView.setQueryHint(getResources().getString(R.string.actionbar_search));
+            mSearchView.setOnQueryTextFocusChangeListener(this);
+            mSearchView.setOnQueryTextListener(this);
+        }
     }
 
     /**
@@ -650,16 +654,18 @@ public class OCFileListFragment extends ExtendedListFragment implements
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if(isShowingOnlyAvailableOffline()){
-            super.onPrepareOptionsMenu(menu);
+      if (Dhamma.isAdmin()) {
+        if (isShowingOnlyAvailableOffline()) {
+          super.onPrepareOptionsMenu(menu);
 
-            MenuItem item = menu.findItem(R.id.action_sync_account);
-            if (item != null) {
-                item.setVisible(false);
-                item.setEnabled(false);
-            }
+          MenuItem item = menu.findItem(R.id.action_sync_account);
+          if (item != null) {
+            item.setVisible(false);
+            item.setEnabled(false);
+          }
         }
         changeGridIcon(menu);   // this is enough if the option stays out of the action bar
+      }
     }
 
     /**
