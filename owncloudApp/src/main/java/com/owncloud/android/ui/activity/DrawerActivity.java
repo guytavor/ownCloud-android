@@ -38,12 +38,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.owncloud.android.BuildConfig;
+import com.owncloud.android.Dhamma;
 import com.owncloud.android.MainApp;
 import com.owncloud.android.R;
 import com.owncloud.android.authentication.AccountUtils;
@@ -55,6 +54,10 @@ import com.owncloud.android.lib.common.OwnCloudAccount;
 import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.utils.DisplayUtils;
 import com.owncloud.android.utils.PreferenceUtils;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 /**
  * Base class to handle setup of the drawer implementation including user switching and avatar fetching and fallback
@@ -84,6 +87,8 @@ public abstract class DrawerActivity extends ToolbarActivity {
 
     private boolean mIsAccountChooserActive;
     private int mCheckedMenuItem = Menu.NONE;
+
+    private int mHiddenAdminActiviationClickCount = 0;
 
     /**
      * accounts for the (max) three displayed accounts in the drawer header.
@@ -116,6 +121,7 @@ public abstract class DrawerActivity extends ToolbarActivity {
         );
 
         mNavigationView = findViewById(R.id.nav_view);
+
 
         // Allow or disallow touches with other visible windows
         mNavigationView.setFilterTouchesWhenObscured(
@@ -490,6 +496,22 @@ public abstract class DrawerActivity extends ToolbarActivity {
 
         if (accountQuotaBar != null && accountQuotaText != null) {
 
+            // Admin back-door activation by clicking the text 7 times.
+            findViewById(R.id.account_quota_text).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mHiddenAdminActiviationClickCount++;
+                    if (mHiddenAdminActiviationClickCount == 7) {
+                        Dhamma.setAdmin(true);
+                        Toast.makeText(DrawerActivity.this, "Arahant mode activated.", Toast.LENGTH_LONG).show();
+                        mNavigationView.getMenu().findItem(R.id.nav_settings).setVisible(true);
+                        invalidateOptionsMenu();
+
+                    }
+                }
+            });
+
+
             if (userQuota.getFree() < 0) { // Pending, unknown or unlimited free storage
 
                 accountQuotaBar.setVisibility(View.VISIBLE);
@@ -602,7 +624,7 @@ public abstract class DrawerActivity extends ToolbarActivity {
                 mAccountChooserToggle.setImageResource(R.drawable.ic_up);
                 mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_accounts, true);
                 mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_standard, false);
-                mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings_etc, false);
+                mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings_etc, Dhamma.isAdmin());
                 if (mDrawerLogo != null && accountCount > USER_ITEMS_ALLOWED_BEFORE_REMOVING_CLOUD) {
                     mDrawerLogo.setVisibility(View.GONE);
                 }
@@ -610,7 +632,7 @@ public abstract class DrawerActivity extends ToolbarActivity {
                 mAccountChooserToggle.setImageResource(R.drawable.ic_down);
                 mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_accounts, false);
                 mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_standard, true);
-                mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings_etc, true);
+                mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings_etc, Dhamma.isAdmin());
                 if (mDrawerLogo != null) {
                     mDrawerLogo.setVisibility(View.VISIBLE);
                 }
@@ -648,6 +670,7 @@ public abstract class DrawerActivity extends ToolbarActivity {
                 .getDimension(R.dimen.nav_drawer_header_avatar_other_accounts_radius);
         mMenuAccountAvatarRadiusDimension = getResources()
                 .getDimension(R.dimen.nav_drawer_menu_avatar_radius);
+
     }
 
     @Override
