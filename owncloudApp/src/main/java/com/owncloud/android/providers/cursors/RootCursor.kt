@@ -40,7 +40,7 @@ class RootCursor(projection: Array<String>?) : MatrixCursor(projection ?: DEFAUL
             .add(Root.COLUMN_DOCUMENT_ID, mainDir.fileId)
             .add(Root.COLUMN_SUMMARY, account.name)
             .add(Root.COLUMN_TITLE, context.getString(R.string.app_name))
-            .add(Root.COLUMN_ICON, R.mipmap.icon)
+            .add(Root.COLUMN_ICON, R.mipmap.old_icon)
             .add(Root.COLUMN_FLAGS, Root.FLAG_SUPPORTS_SEARCH)
     }
 

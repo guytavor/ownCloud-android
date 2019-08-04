@@ -10,7 +10,8 @@ public class Dhamma {
   // TODO: guy: integrate into UI to allow admin access.
   public static boolean isAdmin() { return isAdmin; }
 
-  public static void setAdmin(boolean admin) {
-    Dhamma.isAdmin = admin;
+  /** @returns toggles admn mode and returns whether we are in admin mode after the toggle.*/
+  public static boolean toggleAdmin() {
+    return Dhamma.isAdmin = !isAdmin;
   }
 }

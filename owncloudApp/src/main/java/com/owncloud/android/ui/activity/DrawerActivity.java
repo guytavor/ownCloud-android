@@ -501,10 +501,10 @@ public abstract class DrawerActivity extends ToolbarActivity {
                 @Override
                 public void onClick(View view) {
                     mHiddenAdminActiviationClickCount++;
-                    if (mHiddenAdminActiviationClickCount == 7) {
-                        Dhamma.setAdmin(true);
-                        Toast.makeText(DrawerActivity.this, "Arahant mode activated.", Toast.LENGTH_LONG).show();
-                        mNavigationView.getMenu().findItem(R.id.nav_settings).setVisible(true);
+                    if (mHiddenAdminActiviationClickCount % 7 == 0) {
+                        boolean isAdmin = Dhamma.toggleAdmin();
+                        Toast.makeText(DrawerActivity.this, "Admin mode: " + isAdmin, Toast.LENGTH_LONG).show();
+                        mNavigationView.getMenu().findItem(R.id.nav_settings).setVisible(isAdmin);
                         invalidateOptionsMenu();
 
                     }

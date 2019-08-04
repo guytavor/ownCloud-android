@@ -64,7 +64,7 @@
 
     <application
         android:name=".MainApp"
-        android:icon="@mipmap/icon"
+        android:icon="@drawable/dhamma_icon"
         android:label="@string/app_name"
         android:manageSpaceActivity="com.owncloud.android.ui.activity.ManageSpaceActivity"
         android:resizeableActivity="true"
