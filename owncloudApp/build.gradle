@@ -58,6 +58,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
+        applicationId "com.dhammacloud.android"
         minSdkVersion 19
         targetSdkVersion 28
 
