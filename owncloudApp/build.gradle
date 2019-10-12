@@ -62,8 +62,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 28
 
-        versionCode = 21100100
-        versionName = "2.11.1"
+        versionCode = 21100200
+        versionName = "2.11.2"
 
         buildConfigField "String", gitRemote, "\"" + getGitOriginRemote() + "\""
         buildConfigField "String", commitSHA1, "\"" + getLatestGitHash() + "\""
@@ -126,7 +126,7 @@ android {
     }
 
     applicationVariants.all { variant ->
-        def appName = System.env.OC_APP_NAME
+        def appName = "dhammaCloud"
         setOutputFileName(variant, appName, project)
     }
 }
