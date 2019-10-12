@@ -80,6 +80,7 @@ import com.owncloud.android.operations.SynchronizeFileOperation;
 import com.owncloud.android.operations.UploadFileOperation;
 import com.owncloud.android.operations.common.SyncOperation;
 import com.owncloud.android.syncadapter.FileSyncAdapter;
+import com.owncloud.android.ui.OnBackPressedReceiver;
 import com.owncloud.android.ui.errorhandling.ErrorMessageAdapter;
 import com.owncloud.android.ui.fragment.FileDetailFragment;
 import com.owncloud.android.ui.fragment.FileFragment;
@@ -873,6 +874,9 @@ public class FileDisplayActivity extends FileActivity
                 listOfFiles.listDirectory(false);
             }
             cleanSecondFragment();
+        }
+        if (getSecondFragment() instanceof OnBackPressedReceiver) {
+            ((OnBackPressedReceiver) getSecondFragment()).onBackPressedReceived();
         }
     }
 

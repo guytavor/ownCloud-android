@@ -48,6 +48,7 @@ import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.media.MediaControlView;
 import com.owncloud.android.media.MediaService;
 import com.owncloud.android.media.MediaServiceBinder;
+import com.owncloud.android.ui.OnBackPressedReceiver;
 import com.owncloud.android.ui.controller.TransferProgressController;
 import com.owncloud.android.ui.dialog.ConfirmationDialogFragment;
 import com.owncloud.android.ui.dialog.RemoveFilesDialogFragment;
@@ -64,7 +65,7 @@ import com.owncloud.android.utils.PreferenceUtils;
  * If the {@link OCFile} passed is not downloaded, an {@link IllegalStateException} is
  * generated on instantiation too.
  */
-public class PreviewAudioFragment extends FileFragment {
+public class PreviewAudioFragment extends FileFragment implements OnBackPressedReceiver {
 
     public static final String EXTRA_FILE = "FILE";
     public static final String EXTRA_ACCOUNT = "ACCOUNT";
@@ -512,15 +513,17 @@ public class PreviewAudioFragment extends FileFragment {
         mMediaServiceBinder.pause();
     }
 
+
     @Override
-    public void onPause() {
+    public boolean onBackPressedReceived() {
         super.onPause();
-        // Stop preview when fragment is closed. (back pressed, etc..)
+        // Stop preview when fragment is closed due to back press.
         if (mMediaServiceBinder != null) {
             if (mMediaServiceBinder.isPlaying()) {
                 mMediaController.doPauseResume();
             }
         }
+        return true;
     }
 
 
