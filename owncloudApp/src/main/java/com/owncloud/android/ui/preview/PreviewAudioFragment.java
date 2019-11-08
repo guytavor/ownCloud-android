@@ -526,6 +526,13 @@ public class PreviewAudioFragment extends FileFragment implements OnBackPressedR
         return true;
     }
 
+    public boolean isPlaying() {
+        if (mMediaServiceBinder != null) {
+            return mMediaServiceBinder.isPlaying();
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Finishes the preview

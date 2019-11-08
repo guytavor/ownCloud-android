@@ -103,6 +103,9 @@ import com.owncloud.android.utils.PreferenceUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -159,6 +162,10 @@ public class FileDisplayActivity extends FileActivity
     private LocalBroadcastManager mLocalBroadcastManager;
 
     FilesUploadHelper mFilesUploadHelper;
+
+    private static final long AUTO_REFRESH_DELAY = TimeUnit.MINUTES.toMillis(5);
+    
+    TimerTask autoRefreshTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,6 +236,28 @@ public class FileDisplayActivity extends FileActivity
         if (getResources().getBoolean(R.bool.enable_rate_me_feature) && !isDeveloper()) {
             AppRater.appLaunched(this, getPackageName());
         }
+
+        // Dhamma: Set this activity to refresh every 5 minutes, but not when playing audio.
+        autoRefreshTask = new TimerTask() {
+
+            @Override
+            public void run() {
+                if (!mSyncInProgress) {
+                    Log_OC.v(TAG, "AutoRefreshing folder");
+                    final FileFragment second = getSecondFragment();
+
+                    if (second != null && second instanceof PreviewAudioFragment) {
+                        PreviewAudioFragment previewAudioFragment = (PreviewAudioFragment) second;
+                        if (previewAudioFragment.isPlaying()) {
+                            Log_OC.v(TAG, "Not refreshing while playing.");
+                            return;
+                        }
+                    }
+                    refreshList(false);
+                }
+            }
+        };
+        new Timer().schedule(autoRefreshTask, AUTO_REFRESH_DELAY, AUTO_REFRESH_DELAY);
     }
 
     @Override
@@ -301,6 +330,9 @@ public class FileDisplayActivity extends FileActivity
     protected void onDestroy() {
         Log_OC.v(TAG, "onDestroy() start");
         super.onDestroy();
+        if (autoRefreshTask != null) {
+            autoRefreshTask.cancel();
+        }
         Log_OC.v(TAG, "onDestroy() end");
     }
 
